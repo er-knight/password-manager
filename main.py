@@ -30,6 +30,15 @@ def show(entry):
     for field in entry:
         if entry[field]: print(f"{field.rjust(8)}: {entry[field]}")
 
+def choose(options, prompt):
+    _choice = None
+    while _choice not in options:
+        if _choice is not None:
+            print(f"invalid choice")
+        _choice = input(prompt)
+
+    return _choice
+
 def copy_to_clipboard(password):
 
     pyperclip.copy(password)
@@ -69,22 +78,26 @@ def decrypt_and_load(file, password):
 
 def insert(data, website):
 
-    username = input(
+    username = choose(
+        ("y", "n"), 
         "insert username? [y]es/[n]o: "
     ).strip().lower()[0] == "y"
     username = input("username: ").strip() if username else None
 
-    email = input(
+    email = choose(
+        ("y", "n"), 
         "insert email? [y]es/[n]o: "
     ).strip().lower()[0] == "y"
     email = input("email: ").strip() if email else None
 
-    mobile = input(
+    mobile = choose(
+        ("y", "n"), 
         "insert mobile? [y]es/[n]o: "
     ).strip().lower()[0] == "y"
     mobile = input("mobile: ").strip() if mobile else None
 
-    password = input(
+    password = choose(
+        ("y", "n"), 
         "insert password? [y]es/[n]o: "
     ).strip().lower()[0] == "y"
     password = input("password: ").strip() if password else None
@@ -116,12 +129,13 @@ def insert(data, website):
 def search(data, website):
 
     if not data or website not in data:
-        print("data not found for website: {website}"); return
+        print(f"data not found for website: {website}"); return
 
     for _id, entry in data[website].items():
         show(entry)
 
-        copy_password = input(
+        copy_password = choose(
+            ("y", "n"),
             "copy password? [y]es/[n]o: "
         ).strip().lower()[0]
 
@@ -131,13 +145,13 @@ def search(data, website):
 def update(data, website):
 
     if not data or website not in data:
-        print("data not found for website: {website}, try insert")
+        print(f"data not found for website: {website}, try insert")
         return data
 
     for _id, entry in data[website].items():
         show(entry)
-
-        to_update = input(
+        to_update = choose(
+            ("u", "e", "m", "p"),
             "which to update?\n[u]sername, [e]mail, [m]obile or [p]assword: "
         ).strip().lower()[0]
 
@@ -171,7 +185,8 @@ def main():
 
         website = input("website: ").strip()
 
-        option = input(
+        option = choose(
+            ("i", "s", "u"), 
             "options? [i]nsert/[s]earch/[u]pdate: "
         ).strip().lower()[0]
 
@@ -186,7 +201,10 @@ def main():
             updated_data = update(decrypted_data, website)
             encrypt_and_dump(FILE, password, updated_data)
 
-        _exit = input("exit? [y]es/[n]o: ").strip().lower()[0] == "y"
+        _exit = choose(
+            ("y", "n"), 
+            "exit? [y]es/[n]o: "
+        ).strip().lower()[0] == "y"
 
 if __name__ == "__main__":
 
